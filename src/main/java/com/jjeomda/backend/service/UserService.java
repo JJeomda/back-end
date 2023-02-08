@@ -56,7 +56,8 @@ public class UserService {
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        LoginDto loginDto = new LoginDto(user.getId(), jwtTokenProvider.createToken(user.getUsername(), user.getRoles()));
+
+        LoginDto loginDto = new LoginDto(user.getId(), jwtTokenProvider.createToken(user.getUsername(), user.getRoles()), user.isStatus());
         return loginDto;
     }
 
@@ -77,6 +78,7 @@ public class UserService {
         user.setJob(registerUserInfoDto.getJob());
         user.setHobby(registerUserInfoDto.getHobby());
         user.setAppearance(registerUserInfoDto.getAppearance());
+        user.setStatus(true);
 
         userRepository.save(user);
     }

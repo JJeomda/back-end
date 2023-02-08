@@ -74,6 +74,10 @@ public class User implements UserDetails {
     @Column
     private String appearance;
 
+    // @Getter 가 boolean 타입에 대해서는 getXXX()이 아니라 isXXX() 의 형태로 getter 를 자동생성
+    @Column(columnDefinition = "boolean default false")
+    private boolean status;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
