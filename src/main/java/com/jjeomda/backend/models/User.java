@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
+    private Long kakaoId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -71,8 +74,23 @@ public class User implements UserDetails {
         return true;
     }
 
+    // 일반 회원가입 생성자
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    // 카카오 회원가입 생성자
+    public User(String email, String password, Long kakaoId) {
+        this.email = email;
+        this.password = password;
+        this.kakaoId = kakaoId;
+    }
+
+    public User(User kakaoUser) {
+        this.email = kakaoUser.getEmail();
+        this.password = kakaoUser.getPassword();
+        this.kakaoId = kakaoUser.getKakaoId();
+        this.roles = Collections.singletonList("ROLE_USER");
     }
 }

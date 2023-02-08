@@ -42,6 +42,7 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         User user = new User(email, password);
+        // "ROLE_USER" 를 default 권한으로 설정
         user.setRoles(Collections.singletonList("ROLE_USER"));
         return userRepository.save(user);
     }
