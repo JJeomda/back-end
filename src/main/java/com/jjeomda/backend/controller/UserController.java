@@ -1,6 +1,8 @@
 package com.jjeomda.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jjeomda.backend.dto.LoginDto;
+import com.jjeomda.backend.dto.RegisterUserInfoDto;
 import com.jjeomda.backend.dto.SignupRequestDto;
 import com.jjeomda.backend.service.KakaoUserService;
 import com.jjeomda.backend.service.UserService;
@@ -29,15 +31,20 @@ public class UserController {
 
     // 로그인
     @PostMapping("/api/login")
-    public String loginUser(@RequestBody SignupRequestDto requestDto) {
+    public LoginDto loginUser(@RequestBody SignupRequestDto requestDto) {
         return userService.loginUser(requestDto);
     }
 
     // 카카오 로그인
     @PostMapping("/api/user/kakao/callback")
-    // @RequestParam 은 생략 가능, 자동으로 인식해서 가져올 수 있음.
-    public String kakoLogin(@RequestBody String code) throws JsonProcessingException {
-        System.out.println(code);
+    public LoginDto kakoLogin(@RequestBody String code) throws JsonProcessingException {
         return kakaoUserService.kakaoLogin(code);
+    }
+
+    // USER 정보 입력
+    @PostMapping("/api/user/info/{userId}")
+    public void registerUserInfo(@PathVariable(value = "userId") Long userId,
+                                 @RequestBody RegisterUserInfoDto registerUserInfoDto)  {
+        userService.registerUserInfo(userId, registerUserInfoDto);
     }
 }

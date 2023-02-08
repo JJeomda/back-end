@@ -4,6 +4,7 @@ import com.jjeomda.backend.security.filter.JwtAuthFilter;
 import com.jjeomda.backend.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -46,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/signup").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/user/kakao/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflighted request, OPTIONS 메소드 허락 (CORS)
                 .anyRequest().hasRole("USER") // 그외 나머지 요청은 USER 권한 확인
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),

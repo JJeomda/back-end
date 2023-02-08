@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjeomda.backend.dto.KakaoUserInfoDto;
+import com.jjeomda.backend.dto.LoginDto;
 import com.jjeomda.backend.models.User;
 import com.jjeomda.backend.repository.UserRepository;
 import com.jjeomda.backend.security.provider.JwtTokenProvider;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -40,18 +43,20 @@ public class KakaoUserService {
     }
 
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public LoginDto kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
         // 2. 토큰으로 카카오 API 호출
         KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(accessToken);
         // 3. 호출된 카카오 계정이 우리 홈페이지에서 회원가입이 되어있지 않다면, 회원가입 처리
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfoDto);
-        // 4. 강제 로그인 처리
-        UserDetails userDetails = new User(kakaoUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtTokenProvider.createToken(kakaoUser.getUsername(), kakaoUser.getRoles());
+        // 4. 강제 로그인 처리 (세션 로그인 방식 사용시)
+        //        UserDetails userDetails = new User(kakaoUser);
+        //        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        //        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        LoginDto loginDto = new LoginDto(kakaoUser.getId(), jwtTokenProvider.createToken(kakaoUser.getUsername(), kakaoUser.getRoles()));
+        return loginDto;
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -142,6 +147,7 @@ public class KakaoUserService {
                 String email = kakaoUserInfoDto.getEmail();
 
                 kakaoUser = new User(email, encodedPassword, kakaoId);
+                kakaoUser.setRoles(Collections.singletonList("ROLE_USER"));
             }
             userRepository.save(kakaoUser);
         }

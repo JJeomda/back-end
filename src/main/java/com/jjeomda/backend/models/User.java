@@ -38,6 +38,42 @@ public class User implements UserDetails {
     @Column(unique = true)
     private Long kakaoId;
 
+    @Column
+    private String name;
+
+    @Column
+    private String birth;
+
+    @Column
+    private String sex;
+
+    @Column
+    private String residence;
+
+    @Column
+    private String alcohol;
+
+    @Column
+    private String tobacco;
+
+    @Column
+    private String tall;
+
+    @Column
+    private String height;
+
+    @Column
+    private String mbti;
+
+    @Column
+    private String job;
+
+    @Column
+    private String hobby;
+
+    @Column
+    private String appearance;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -87,10 +123,11 @@ public class User implements UserDetails {
         this.kakaoId = kakaoId;
     }
 
-    public User(User kakaoUser) {
-        this.email = kakaoUser.getEmail();
-        this.password = kakaoUser.getPassword();
-        this.kakaoId = kakaoUser.getKakaoId();
-        this.roles = Collections.singletonList("ROLE_USER");
-    }
+    // 강제 로그인 생성자
+    //    public User(User kakaoUser) {
+    //        this.email = kakaoUser.getEmail();
+    //        this.password = kakaoUser.getPassword();
+    //        this.kakaoId = kakaoUser.getKakaoId();
+    //        this.roles = Collections.singletonList("ROLE_USER");
+    //    }
 }

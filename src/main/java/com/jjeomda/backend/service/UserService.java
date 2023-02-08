@@ -1,5 +1,7 @@
 package com.jjeomda.backend.service;
 
+import com.jjeomda.backend.dto.LoginDto;
+import com.jjeomda.backend.dto.RegisterUserInfoDto;
 import com.jjeomda.backend.dto.SignupRequestDto;
 import com.jjeomda.backend.models.User;
 import com.jjeomda.backend.repository.UserRepository;
@@ -48,12 +50,34 @@ public class UserService {
     }
 
     // 로그인 비즈니스 로직
-    public String loginUser(SignupRequestDto requestDto) {
-        User member = userRepository.findByEmail(requestDto.getEmail())
+    public LoginDto loginUser(SignupRequestDto requestDto) {
+        User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 E-MAIL 입니다."));
-        if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        LoginDto loginDto = new LoginDto(user.getId(), jwtTokenProvider.createToken(user.getUsername(), user.getRoles()));
+        return loginDto;
+    }
+
+    // 회원정보 입력 비즈니스 로직
+    public void registerUserInfo(Long userId, RegisterUserInfoDto registerUserInfoDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+
+        user.setName(registerUserInfoDto.getName());
+        user.setBirth(registerUserInfoDto.getBirth());
+        user.setSex(registerUserInfoDto.getSex());
+        user.setResidence(registerUserInfoDto.getResidence());
+        user.setAlcohol(registerUserInfoDto.getAlcohol());
+        user.setTobacco(registerUserInfoDto.getTobacco());
+        user.setTall(registerUserInfoDto.getTall());
+        user.setHeight(registerUserInfoDto.getHeight());
+        user.setMbti(registerUserInfoDto.getMbti());
+        user.setJob(registerUserInfoDto.getJob());
+        user.setHobby(registerUserInfoDto.getHobby());
+        user.setAppearance(registerUserInfoDto.getAppearance());
+
+        userRepository.save(user);
     }
 }
