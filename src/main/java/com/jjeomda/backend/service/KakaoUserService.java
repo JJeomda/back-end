@@ -55,6 +55,8 @@ public class KakaoUserService {
         //        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         //        SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // 영속성 캐시 관련, 여기서 이렇게 setRoles 해도 DB 에는 반영되지 않음 !!!!!!! 그래서 JWT 검증 과정에서 계속 오류가 났던 것 !!!!
+        //  kakaoUser.setRoles(Collections.singletonList("ROLE_USER"));
         LoginDto loginDto = new LoginDto(kakaoUser.getId(), jwtTokenProvider.createToken(kakaoUser.getUsername(), kakaoUser.getRoles()));
         return loginDto;
     }
