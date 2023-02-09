@@ -42,25 +42,35 @@ public class UserController {
     }
 
     // USER 정보 입력
-    @PostMapping("/api/user/info/{userId}")
-    public void registerUserInfo(@PathVariable(value = "userId") Long userId,
-                                 @RequestBody RegisterUserInfoDto registerUserInfoDto,
-                                 @AuthenticationPrincipal User user) throws Exception {
-        userService.registerUserInfo(userId, registerUserInfoDto, user.getId());
+    // 처음에 이런식으로 설계를 했는데, userId 를 받을 필요가 없었음 .
+    // @AuthenticationPrincipal 를 통해 id 값을 받아올 수 있기 때문 .
+    //    @PostMapping("/api/user/info/{userId}")
+    //    public void registerUserInfo(@PathVariable(value = "userId") Long userId,
+    //                                 @RequestBody RegisterUserInfoDto registerUserInfoDto,
+    //                                 @AuthenticationPrincipal User user) throws Exception {
+    //        userService.registerUserInfo(userId, registerUserInfoDto, user.getId());
+    //    }
+
+    // USER 정보 입력
+    @PostMapping("/api/user/info")
+    public void registerUserInfo(
+            @RequestBody RegisterUserInfoDto registerUserInfoDto,
+            @AuthenticationPrincipal User user) throws Exception {
+        userService.registerUserInfo(user.getId(), registerUserInfoDto);
     }
 
-    // USER 정보 호출
-    @GetMapping("/api/user/info/{userId}")
-    public UserInfoDto getUserInfo (@PathVariable(value = "userId") Long userId,
-                                    @AuthenticationPrincipal User user) throws Exception {
-        return userService.getUserInfo(userId, user.getId());
+    // USER 정보 조회
+    @GetMapping("/api/user/info")
+    public UserInfoDto getUserInfo(
+            @AuthenticationPrincipal User user) throws Exception {
+        return userService.getUserInfo(user.getId());
     }
 
     // USER 이상형 정보 입력
-    @PostMapping("/api/user/ideal/info/{userId}")
-    public void registerUserIdealInfo(@PathVariable(value = "userId") Long userId,
-                                 @RequestBody RegisterUserIdealInfoDto registerUserIdealInfoDto,
-                                 @AuthenticationPrincipal User user) throws Exception {
-        userService.registerUserIdealInfo(userId, registerUserIdealInfoDto, user.getId());
+    @PostMapping("/api/user/ideal/info")
+    public void registerUserIdealInfo(
+            @RequestBody RegisterUserIdealInfoDto registerUserIdealInfoDto,
+            @AuthenticationPrincipal User user) throws Exception {
+        userService.registerUserIdealInfo(user.getId(), registerUserIdealInfoDto);
     }
 }

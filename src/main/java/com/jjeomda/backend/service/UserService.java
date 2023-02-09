@@ -64,15 +64,10 @@ public class UserService {
         return loginDto;
     }
 
-    // 회원정보 입력 비즈니스 로직
-    public void registerUserInfo(Long userId, RegisterUserInfoDto registerUserInfoDto, Long loginUserId) throws Exception {
-        User user = userRepository.findById(userId)
+    // USER 정보 입력 비즈니스 로직
+    public void registerUserInfo(Long loginUserId, RegisterUserInfoDto registerUserInfoDto) throws Exception {
+        User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
-
-        // 로그인한 유저 검증
-        if (!loginUserId.equals(userId)) {
-            throw new Exception("로그인 정보가 일치하지 않습니다.");
-        }
 
         user.setName(registerUserInfoDto.getName());
         user.setBirth(registerUserInfoDto.getBirth());
@@ -91,29 +86,38 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserInfoDto getUserInfo(Long userId, Long loginUserId) throws Exception {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+    // USER 정보 조회 비즈니스 로직
+    // 처음에 이런식으로 설계를 했는데, userId 를 받을 필요가 없었음 .
+    // @AuthenticationPrincipal 를 통해 id 값을 받아올 수 있기 때문 .
+    //    public UserInfoDto getUserInfo(Long userId, Long loginUserId) throws Exception {
+    //        User user = userRepository.findById(userId)
+    //                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+    //
+    //        // 로그인한 유저 검증
+    //        if (!loginUserId.equals(userId)) {
+    //            throw new Exception("로그인 정보가 일치하지 않습니다.");
+    //        }
+    //
+    //        UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
+    //        return userInfoDto;
+    //
+    //    }
 
-        // 로그인한 유저 검증
-        if (!loginUserId.equals(userId)) {
-            throw new Exception("로그인 정보가 일치하지 않습니다.");
-        }
+    // USER 정보 조회 비즈니스 로직
+    public UserInfoDto getUserInfo(Long loginUserId) throws Exception {
+        User user = userRepository.findById(loginUserId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
 
         UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
         return userInfoDto;
 
     }
 
-    // 유저 이상형 정보입력 비즈니스 로직
-    public void registerUserIdealInfo(Long userId, RegisterUserIdealInfoDto registerUserIdealInfoDto, Long loginUserId) throws Exception {
-        User user = userRepository.findById(userId)
+    // USER 이상형 정보입력 비즈니스 로직
+    public void registerUserIdealInfo(Long loginUserId, RegisterUserIdealInfoDto registerUserIdealInfoDto) throws Exception {
+        User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
 
-        // 로그인한 유저 검증
-        if (!loginUserId.equals(userId)) {
-            throw new Exception("로그인 정보가 일치하지 않습니다.");
-        }
 
         UserIdeal userIdeal = new UserIdeal(
                 registerUserIdealInfoDto.getAge(),
