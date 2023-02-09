@@ -3,6 +3,7 @@ package com.jjeomda.backend.service;
 import com.jjeomda.backend.dto.LoginDto;
 import com.jjeomda.backend.dto.RegisterUserInfoDto;
 import com.jjeomda.backend.dto.SignupRequestDto;
+import com.jjeomda.backend.dto.UserInfoDto;
 import com.jjeomda.backend.models.User;
 import com.jjeomda.backend.repository.UserRepository;
 import com.jjeomda.backend.security.provider.JwtTokenProvider;
@@ -81,5 +82,20 @@ public class UserService {
         user.setStatus(true);
 
         userRepository.save(user);
+    }
+
+    public UserInfoDto getUserInfo(Long userId, Long loginUserId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+
+        // 로그인한 유저 검증
+        if (loginUserId.equals(userId)) {
+            UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
+            return userInfoDto;
+        } else {
+            throw new Exception("로그인 정보가 일치하지 않습니다.");
+        }
+
+
     }
 }

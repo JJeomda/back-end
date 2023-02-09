@@ -1,6 +1,7 @@
 package com.jjeomda.backend.models;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicInsert // null 인 필드값이 insert 나 update 시 제외되게 .
 
 // SpringSecurity 는 UserDetails 객체를 통해 권한 정보를 관리하기 때문에
 // User 클래스에 UserDetails 를 구현하고 추가 정보를 재정의 해야 함 .
@@ -75,8 +77,17 @@ public class User implements UserDetails {
     private String appearance;
 
     // @Getter 가 boolean 타입에 대해서는 getXXX()이 아니라 isXXX() 의 형태로 getter 를 자동생성
+    // 자기 정보를 입력했는지 true / false
     @Column(columnDefinition = "boolean default false")
     private boolean status;
+
+    // 블라인드 매칭 진행 상태 ( -1, 0, 1 )
+    @Column(columnDefinition = "Long default -1")
+    private Long matchingStatus;
+
+    // 유저 이상형 테이블 1:1 매핑
+    @OneToOne
+    private UserIdeal userIdeal;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -112,6 +123,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    // 현재 로그인한 유저의 정보 받아오기 위함
+    public Long getId() {
+        return id;
     }
 
     // 일반 회원가입 생성자

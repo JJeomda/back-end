@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jjeomda.backend.dto.LoginDto;
 import com.jjeomda.backend.dto.RegisterUserInfoDto;
 import com.jjeomda.backend.dto.SignupRequestDto;
+import com.jjeomda.backend.dto.UserInfoDto;
+import com.jjeomda.backend.models.User;
 import com.jjeomda.backend.service.KakaoUserService;
 import com.jjeomda.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,5 +49,12 @@ public class UserController {
     public void registerUserInfo(@PathVariable(value = "userId") Long userId,
                                  @RequestBody RegisterUserInfoDto registerUserInfoDto)  {
         userService.registerUserInfo(userId, registerUserInfoDto);
+    }
+
+    // USER 정보 호출
+    @GetMapping("/api/user/info/{userId}")
+    public UserInfoDto getUserInfo (@PathVariable(value = "userId") Long userId,
+                                    @AuthenticationPrincipal User user) throws Exception {
+        return userService.getUserInfo(userId, user.getId());
     }
 }

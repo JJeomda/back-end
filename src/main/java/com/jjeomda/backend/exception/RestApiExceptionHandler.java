@@ -19,4 +19,16 @@ public class RestApiExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
+
+    @ExceptionHandler(value = { Exception.class })
+    public ResponseEntity<Object> handleApiRequestException(Exception ex) {
+        RestApiException restApiException = new RestApiException();
+        restApiException.setHttpStatus(HttpStatus.UNAUTHORIZED);
+        restApiException.setErrorMessage(ex.getMessage());
+
+        return new ResponseEntity(
+                restApiException,
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }
