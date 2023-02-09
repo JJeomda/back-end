@@ -1,10 +1,7 @@
 package com.jjeomda.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jjeomda.backend.dto.LoginDto;
-import com.jjeomda.backend.dto.RegisterUserInfoDto;
-import com.jjeomda.backend.dto.SignupRequestDto;
-import com.jjeomda.backend.dto.UserInfoDto;
+import com.jjeomda.backend.dto.*;
 import com.jjeomda.backend.models.User;
 import com.jjeomda.backend.service.KakaoUserService;
 import com.jjeomda.backend.service.UserService;
@@ -57,5 +54,13 @@ public class UserController {
     public UserInfoDto getUserInfo (@PathVariable(value = "userId") Long userId,
                                     @AuthenticationPrincipal User user) throws Exception {
         return userService.getUserInfo(userId, user.getId());
+    }
+
+    // USER 이상형 정보 입력
+    @PostMapping("/api/user/ideal/info/{userId}")
+    public void registerUserIdealInfo(@PathVariable(value = "userId") Long userId,
+                                 @RequestBody RegisterUserIdealInfoDto registerUserIdealInfoDto,
+                                 @AuthenticationPrincipal User user) throws Exception {
+        userService.registerUserIdealInfo(userId, registerUserIdealInfoDto, user.getId());
     }
 }

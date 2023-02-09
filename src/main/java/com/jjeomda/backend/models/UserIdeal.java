@@ -17,10 +17,7 @@ public class UserIdeal {
     private Long id;
 
     @Column
-    private String birth;
-
-    @Column
-    private String sex;
+    private String age;
 
     @Column
     private String residence;
@@ -52,4 +49,29 @@ public class UserIdeal {
     // 유저 이상형 테이블 1:1 매핑
     @OneToOne(mappedBy = "userIdeal")
     private User user;
+
+    public UserIdeal(
+            String age,
+            String residence,
+            String alcohol,
+            String tobacco,
+            String tall,
+            String height,
+            String mbti,
+            String job,
+            String hobby,
+            String appearance) {
+        this.age = age;
+        this.residence = residence;
+        this.alcohol = alcohol;
+        this.tall = tall;
+        this.tobacco = tobacco;
+        this.height = height;
+        this.mbti = mbti;
+        this.job = job;
+        this.hobby = hobby;
+        this.appearance = appearance;
+    }
 }
+
+

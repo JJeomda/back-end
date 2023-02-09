@@ -1,10 +1,9 @@
 package com.jjeomda.backend.service;
 
-import com.jjeomda.backend.dto.LoginDto;
-import com.jjeomda.backend.dto.RegisterUserInfoDto;
-import com.jjeomda.backend.dto.SignupRequestDto;
-import com.jjeomda.backend.dto.UserInfoDto;
+import com.jjeomda.backend.dto.*;
 import com.jjeomda.backend.models.User;
+import com.jjeomda.backend.models.UserIdeal;
+import com.jjeomda.backend.repository.UserIdealRepository;
 import com.jjeomda.backend.repository.UserRepository;
 import com.jjeomda.backend.security.provider.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,19 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserIdealRepository userIdealRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public UserService(UserRepository userRepository,
+                       UserIdealRepository userIdealRepository,
                        PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userIdealRepository = userIdealRepository;
     }
 
     // 회원가입 비즈니스 로직
@@ -100,6 +102,38 @@ public class UserService {
 
         UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
         return userInfoDto;
+
+    }
+
+    // 유저 이상형 정보입력 비즈니스 로직
+    public void registerUserIdealInfo(Long userId, RegisterUserIdealInfoDto registerUserIdealInfoDto, Long loginUserId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+
+        // 로그인한 유저 검증
+        if (!loginUserId.equals(userId)) {
+            throw new Exception("로그인 정보가 일치하지 않습니다.");
+        }
+
+        UserIdeal userIdeal = new UserIdeal(
+                registerUserIdealInfoDto.getAge(),
+                registerUserIdealInfoDto.getResidence(),
+                registerUserIdealInfoDto.getAlcohol(),
+                registerUserIdealInfoDto.getTobacco(),
+                registerUserIdealInfoDto.getTall(),
+                registerUserIdealInfoDto.getHeight(),
+                registerUserIdealInfoDto.getMbti(),
+                registerUserIdealInfoDto.getJob(),
+                registerUserIdealInfoDto.getHobby(),
+                registerUserIdealInfoDto.getAppearance()
+        );
+
+        userIdealRepository.save(userIdeal);
+
+        user.setUserIdeal(userIdeal); // 연관관계 맺기 !!!
+        user.setMatchingStatus(0L);
+
+        userRepository.save(user);
 
     }
 }
