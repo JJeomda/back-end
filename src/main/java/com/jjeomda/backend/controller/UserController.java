@@ -47,8 +47,9 @@ public class UserController {
     // USER 정보 입력
     @PostMapping("/api/user/info/{userId}")
     public void registerUserInfo(@PathVariable(value = "userId") Long userId,
-                                 @RequestBody RegisterUserInfoDto registerUserInfoDto)  {
-        userService.registerUserInfo(userId, registerUserInfoDto);
+                                 @RequestBody RegisterUserInfoDto registerUserInfoDto,
+                                 @AuthenticationPrincipal User user) throws Exception {
+        userService.registerUserInfo(userId, registerUserInfoDto, user.getId());
     }
 
     // USER 정보 호출

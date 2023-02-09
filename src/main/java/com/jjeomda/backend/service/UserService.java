@@ -63,9 +63,14 @@ public class UserService {
     }
 
     // 회원정보 입력 비즈니스 로직
-    public void registerUserInfo(Long userId, RegisterUserInfoDto registerUserInfoDto) {
+    public void registerUserInfo(Long userId, RegisterUserInfoDto registerUserInfoDto, Long loginUserId) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+
+        // 로그인한 유저 검증
+        if (!loginUserId.equals(userId)) {
+            throw new Exception("로그인 정보가 일치하지 않습니다.");
+        }
 
         user.setName(registerUserInfoDto.getName());
         user.setBirth(registerUserInfoDto.getBirth());
@@ -89,13 +94,12 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
 
         // 로그인한 유저 검증
-        if (loginUserId.equals(userId)) {
-            UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
-            return userInfoDto;
-        } else {
+        if (!loginUserId.equals(userId)) {
             throw new Exception("로그인 정보가 일치하지 않습니다.");
         }
 
+        UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
+        return userInfoDto;
 
     }
 }
