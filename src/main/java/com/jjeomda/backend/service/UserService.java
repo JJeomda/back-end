@@ -69,6 +69,11 @@ public class UserService {
         User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
 
+        // 기존에 정보가 등록되어있으면 올바르지 않은 경로로 post 요청시 기존 정보가 다시 덮어 씌어지는 것 방지
+        if(user.getName() != null) {
+            throw new IllegalArgumentException("기존에 정보가 등록되어 있습니다.");
+        }
+
         user.setName(registerUserInfoDto.getName());
         user.setBirth(registerUserInfoDto.getBirth());
         user.setSex(registerUserInfoDto.getSex());
@@ -108,7 +113,7 @@ public class UserService {
         User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
 
-        UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus());
+        UserInfoDto userInfoDto = new UserInfoDto(user.getName(), user.getMatchingStatus(), user.isStatus());
         return userInfoDto;
 
     }
@@ -117,6 +122,11 @@ public class UserService {
     public void registerUserIdealInfo(Long loginUserId, RegisterUserIdealInfoDto registerUserIdealInfoDto) throws Exception {
         User user = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 유저입니다."));
+
+        // 기존에 정보가 등록되어있으면 올바르지 않은 경로로 post 요청시 기존 정보가 다시 덮어 씌어지는 것 방지
+        if(user.getMatchingStatus() != -1) {
+            throw new IllegalArgumentException("기존에 진행중인 매칭이 있습니다.");
+        }
 
 
         UserIdeal userIdeal = new UserIdeal(

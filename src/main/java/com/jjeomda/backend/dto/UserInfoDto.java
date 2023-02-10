@@ -8,4 +8,5 @@ import lombok.Getter;
 public class UserInfoDto {
     private String name;
     private Long matchingStatus;
+    private boolean status;
 }
