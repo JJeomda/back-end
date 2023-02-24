@@ -82,7 +82,7 @@ public class User implements UserDetails {
     private boolean status;
 
     // 블라인드 매칭 진행 상태 ( -1, 0, 1 )
-    @Column(columnDefinition = "Long default -1L")
+    @Column(columnDefinition = "bigint default -1")
     private Long matchingStatus;
 
     // 유저 이상형 테이블 1:1 매핑
